@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffd8ec" />
+  <meta name="description" content="文房具の妖精をたまごから育てる、やさしい育成アプリのプロトタイプです。" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>ぶんぐのたまご</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">まいにち育成</p>
+        <h1>ぶんぐのたまご</h1>
+      </div>
+      <div class="top-actions" aria-label="音の設定">
+        <button id="soundToggle" class="icon-button" type="button" aria-label="効果音のオンオフ">🔊</button>
+        <button id="bgmToggle" class="bgm-button" type="button" aria-label="BGMのオンオフ">BGM</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-card" aria-labelledby="characterName">
+        <div class="room-sky">
+          <div class="sparkle s1"></div>
+          <div class="sparkle s2"></div>
+          <div class="sparkle s3"></div>
+          <div class="shelf"></div>
+        </div>
+
+        <div class="desk-area">
+          <div class="speech" id="speechBubble">たまごがゆれてるよ。やさしくタップしてね。</div>
+          <button id="characterButton" class="character-button" type="button" aria-label="キャラクターをなでる、またはタップする">
+            <div id="characterArt" class="egg art-stage-egg" aria-hidden="true">
+              <div class="egg-shine"></div>
+              <div class="egg-pattern p1"></div>
+              <div class="egg-pattern p2"></div>
+            </div>
+          </button>
+          <div id="reactionEffect" class="reaction-effect hidden" aria-hidden="true"></div>
+          <div class="desk-line"></div>
+        </div>
+
+        <div class="name-row">
+          <div>
+            <p class="tiny-label">あなたの文房具フレンズ</p>
+            <h2 id="characterName">ふしぎなたまご</h2>
+          </div>
+          <div class="level-badge">
+            <span>Lv.</span><strong id="levelText">1</strong>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-label"><span>せいちょう</span><span id="xpText">0 / 100</span></div>
+          <div class="progress"><div id="xpBar" class="progress-bar"></div></div>
+        </div>
+      </section>
+
+      <section class="actions-card" aria-label="お世話メニュー">
+        <button class="care-button" data-action="feed" type="button"><span>🖋️</span>ごはん</button>
+        <button class="care-button" data-action="clean" type="button"><span>🧽</span>そうじ</button>
+        <button class="care-button" data-action="study" type="button"><span>📖</span>おべんきょう</button>
+        <button class="care-button" data-action="style" type="button"><span>🎀</span>デコる</button>
+        <button class="care-button" data-action="sleep" type="button"><span>🌙</span>ねる</button>
+        <button class="care-button primary" id="openGame" type="button"><span>🎮</span>ミニゲーム</button>
+      </section>
+
+      <section class="stats-card" aria-label="ステータス">
+        <div class="stat">
+          <span class="stat-icon">✨</span>
+          <div><b>きれいさ</b><div class="mini-bar"><span id="cleanBar"></span></div></div>
+          <em id="cleanText">80</em>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">🔥</span>
+          <div><b>やる気</b><div class="mini-bar"><span id="moodBar"></span></div></div>
+          <em id="moodText">80</em>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">💗</span>
+          <div><b>なかよし</b><div class="mini-bar"><span id="friendBar"></span></div></div>
+          <em id="friendText">10</em>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">💡</span>
+          <div><b>ひらめき</b><div class="mini-bar"><span id="ideaBar"></span></div></div>
+          <em id="ideaText">0</em>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">🎀</span>
+          <div><b>おしゃれ</b><div class="mini-bar"><span id="styleBar"></span></div></div>
+          <em id="styleText">0</em>
+        </div>
+      </section>
+
+      <section class="tabs-card">
+        <div class="tab-buttons" role="tablist" aria-label="情報タブ">
+          <button class="tab active" data-tab="diary" type="button">日記</button>
+          <button class="tab" data-tab="book" type="button">図鑑</button>
+          <button class="tab" data-tab="settings" type="button">設定</button>
+        </div>
+
+        <div id="diaryPanel" class="tab-panel active">
+          <h3>今日のようす</h3>
+          <ul id="diaryList" class="diary-list"></ul>
+        </div>
+
+        <div id="bookPanel" class="tab-panel">
+          <h3>ぶんぐ図鑑</h3>
+          <div class="book-grid" id="bookGrid"></div>
+        </div>
+
+        <div id="settingsPanel" class="tab-panel">
+          <h3>設定</h3>
+          <p class="note">データはこの端末のブラウザ内に保存されます。外部通信・広告・アカウント登録はありません。BGMはスマホの仕様上、BGMボタンを押すと再生されます。</p>
+          <div class="setting-row">
+            <button id="renameButton" class="soft-button" type="button">なまえ変更</button>
+            <button id="resetButton" class="danger-button" type="button">はじめから</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="gameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">ミニゲーム</p>
+          <h2 id="gameTitle">じゃんけんゲーム</h2>
+        </div>
+        <button id="closeGame" class="icon-button" type="button" aria-label="閉じる">×</button>
+      </div>
+
+      <div class="game-select" aria-label="ミニゲーム選択">
+        <button class="game-choice active" data-game="rps" type="button">✊じゃんけん</button>
+        <button class="game-choice" data-game="candy" type="button">🍬キャンディー</button>
+        <button class="game-choice" data-game="look" type="button">👉あっち向いてホイ</button>
+        <button class="game-choice" data-game="flags" type="button">🚩赤旗白旗</button>
+        <button class="game-choice" data-game="catch" type="button">🍽️お皿キャッチ</button>
+      </div>
+
+      <p id="gameHelp" class="game-help">相手の手に勝つ手を選ぼう。</p>
+      <div class="game-status">
+        <span>のこり <b id="gameTime">20</b>秒</span>
+        <span>スコア <b id="gameScore">0</b></span>
+      </div>
+      <div id="gameBoard" class="game-board" aria-label="ミニゲーム画面"></div>
+      <button id="startGame" class="primary-wide" type="button">スタート</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
